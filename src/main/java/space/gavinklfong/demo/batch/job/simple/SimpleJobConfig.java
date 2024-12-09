@@ -1,8 +1,7 @@
-package space.gavinklfong.demo.batch;
+package space.gavinklfong.demo.batch.job.simple;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -18,9 +17,8 @@ import space.gavinklfong.demo.batch.dto.Person;
 
 import javax.sql.DataSource;
 
-@EnableBatchProcessing
 @Configuration
-public class AppConfig {
+public class SimpleJobConfig {
 
     @Bean
     public Job importUserJob(JobRepository jobRepository,Step step1, JobCompletionNotificationListener listener) {

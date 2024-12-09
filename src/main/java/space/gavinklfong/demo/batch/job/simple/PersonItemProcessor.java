@@ -1,4 +1,4 @@
-package space.gavinklfong.demo.batch;
+package space.gavinklfong.demo.batch.job.simple;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;

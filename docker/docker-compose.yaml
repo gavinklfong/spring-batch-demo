@@ -6,4 +6,6 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - "./mysql/schema.sql:/docker-entrypoint-initdb.d/1.sql"
+      - "./mysql/database.sql:/docker-entrypoint-initdb.d/01.sql"
+      - "./mysql/spring-batch-schema.sql:/docker-entrypoint-initdb.d/02.sql"
+      - "./mysql/app-schema.sql:/docker-entrypoint-initdb.d/03.sql"
