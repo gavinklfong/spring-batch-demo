@@ -1,7 +1,7 @@
 package space.gavinklfong.demo.batch;
 
-import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
+import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ public class BatchApplication implements CommandLineRunner {
 	JobLauncher jobLauncher;
 
 	@Autowired
-	Job importStockMarketDataJob;
+	JobLocator jobLocator;
 
 	public static void main(String[] args) {
 		System.exit(
@@ -28,6 +28,7 @@ public class BatchApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		jobLauncher.run(importStockMarketDataJob, new JobParameters());
+//		jobLauncher.run(jobLocator.getJob("importUserJob"), new JobParameters());
+		jobLauncher.run(jobLocator.getJob("importStockMarketDataJob"), new JobParameters());
 	}
 }

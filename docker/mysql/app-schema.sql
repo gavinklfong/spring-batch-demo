@@ -20,3 +20,12 @@ CREATE TABLE stock_price_history  (
     volume bigint,
     PRIMARY KEY (ticker, `date`)
 );
+
+CREATE TABLE stock_price_sma  (
+    ticker VARCHAR(30),
+    `date` date,
+    value_10 decimal(14,2),
+    value_20 decimal(14,2),
+    value_50 decimal(14,2),
+    PRIMARY KEY (ticker, `date`)
+);

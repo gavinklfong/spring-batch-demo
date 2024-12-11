@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import space.gavinklfong.demo.batch.dto.StockMarketData;
+import space.gavinklfong.demo.batch.dto.StockSimpleMovingAverage;
 
 import javax.sql.DataSource;
 
@@ -33,7 +34,7 @@ public class StockMarketDataJobConfig {
                                           FlatFileItemReader<StockMarketData> stockMarketDataReader,
                                           JdbcBatchItemWriter<StockMarketData> stockMarketDataWriter) {
         return new StepBuilder("importStockMarketDataStep", jobRepository)
-                .<StockMarketData, StockMarketData> chunk(3, transactionManager)
+                .<StockMarketData, StockMarketData> chunk(1000, transactionManager)
                 .reader(stockMarketDataReader)
                 .writer(stockMarketDataWriter)
                 .build();
@@ -61,4 +62,36 @@ public class StockMarketDataJobConfig {
                 .beanMapped()
                 .build();
     }
+
+
+    @Bean
+    public Step calculateSimpleMovingAverageStep(JobRepository jobRepository,
+                                                 DataSourceTransactionManager transactionManager,
+                                                 FlatFileItemReader<StockMarketData> stockMarketDataReader,
+                                                 StockSimpleMovingAverageProcessor stockSimpleMovingAverageProcessor,
+                                                 JdbcBatchItemWriter<StockSimpleMovingAverage> stockMovingAverageWriter) {
+        return new StepBuilder("calculateSimpleMovingAverageStep", jobRepository)
+                .<StockMarketData, StockSimpleMovingAverage> chunk(1000, transactionManager)
+                .reader(stockMarketDataReader) // get list of stock by date from job parameter
+                .processor(stockSimpleMovingAverageProcessor)
+                .writer(stockMovingAverageWriter)
+                .build();
+    }
+
+    @Bean
+    public StockSimpleMovingAverageProcessor simpleMovingAverageProcessor() {
+        return new StockSimpleMovingAverageProcessor();
+    }
+
+    @Bean
+    public JdbcBatchItemWriter<StockSimpleMovingAverage> stockMovingAverageWriter(DataSource dataSource) {
+        return new JdbcBatchItemWriterBuilder<StockSimpleMovingAverage>()
+                .sql("INSERT INTO stock_price_sma (ticker, date, value_10, value_20, value_50) " +
+                        "VALUES (:ticker, :date, :value10, :value20, :value50)")
+                .dataSource(dataSource)
+                .beanMapped()
+                .build();
+    }
+
+
 }

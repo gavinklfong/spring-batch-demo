@@ -4,17 +4,14 @@ import lombok.Builder;
 import lombok.Value;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDate;
 
 @Builder
 @Value
-public class StockMarketData {
+public class StockSimpleMovingAverage {
     String ticker;
     LocalDate date;
-    BigDecimal close;
-    BigDecimal open;
-    BigDecimal high;
-    BigDecimal low;
-    BigInteger volume;
+    BigDecimal value10;
+    BigDecimal value20;
+    BigDecimal value50;
 }
