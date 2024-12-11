@@ -76,7 +76,14 @@ public class CalculateStockSimpleMovingAverageJobConfig {
     public JdbcBatchItemWriter<StockSimpleMovingAverage> stockMovingAverageWriter(DataSource dataSource) {
         return new JdbcBatchItemWriterBuilder<StockSimpleMovingAverage>()
                 .sql("INSERT INTO stock_price_sma (ticker, date, value_10, value_20, value_50, value_100, value_200) " +
-                        "VALUES (:ticker, :date, :value10, :value20, :value50, :value100, :value200)")
+                        "VALUES (:ticker, :date, :value10, :value20, :value50, :value100, :value200) " +
+                        "ON DUPLICATE KEY UPDATE " +
+                        "value_10 = :value10, " +
+                        "value_20 = :value20, " +
+                        "value_50 = :value50, " +
+                        "value_100 = :value100, " +
+                        "value_200 = :value200 "
+                )
                 .dataSource(dataSource)
                 .beanMapped()
                 .build();

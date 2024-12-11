@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @EnableBatchProcessing
 @SpringBootApplication
@@ -32,11 +33,16 @@ public class BatchApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 //		jobLauncher.run(jobLocator.getJob("importUserJob"), new JobParameters());
-//		jobLauncher.run(jobLocator.getJob("importStockMarketDataJob"), new JobParameters());
 
-		JobParameters jobParameters = new JobParametersBuilder()
-				.addLocalDate("date", LocalDate.parse("2023-07-06"))
+		JobParameters jobParametersForStockImport = new JobParametersBuilder()
+				.addLocalDateTime("timestamp", LocalDateTime.now())
 				.toJobParameters();
-		jobLauncher.run(jobLocator.getJob("calculateSimpleMovingAverageJob"), jobParameters);
+		jobLauncher.run(jobLocator.getJob("importStockMarketDataJob"), jobParametersForStockImport);
+
+		JobParameters jobParametersForSimpleMovingAverage = new JobParametersBuilder()
+				.addLocalDate("date", LocalDate.parse("2023-07-06"))
+				.addLocalDateTime("timestamp", LocalDateTime.now())
+				.toJobParameters();
+		jobLauncher.run(jobLocator.getJob("calculateSimpleMovingAverageJob"), jobParametersForSimpleMovingAverage);
 	}
 }

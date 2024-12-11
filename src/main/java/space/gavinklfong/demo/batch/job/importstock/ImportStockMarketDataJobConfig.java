@@ -56,7 +56,13 @@ public class ImportStockMarketDataJobConfig {
     public JdbcBatchItemWriter<StockMarketData> stockMarketDataWriter(DataSource dataSource) {
         return new JdbcBatchItemWriterBuilder<StockMarketData>()
                 .sql("INSERT INTO stock_price_history (ticker, date, open, close, high, low, volume) " +
-                        "VALUES (:ticker, :date, :open, :close, :high, :low, :volume)")
+                        "VALUES (:ticker, :date, :open, :close, :high, :low, :volume) " +
+                        "ON DUPLICATE KEY UPDATE " +
+                        "open = :open, " +
+                        "close = :close, " +
+                        "high = :high, " +
+                        "low = :low, " +
+                        "volume = :volume")
                 .dataSource(dataSource)
                 .beanMapped()
                 .build();
