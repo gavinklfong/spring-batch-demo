@@ -37,12 +37,18 @@ public class BatchApplication implements CommandLineRunner {
 		JobParameters jobParametersForStockImport = new JobParametersBuilder()
 				.addLocalDateTime("timestamp", LocalDateTime.now())
 				.toJobParameters();
-		jobLauncher.run(jobLocator.getJob("importStockMarketDataJob"), jobParametersForStockImport);
+//		jobLauncher.run(jobLocator.getJob("importStockMarketDataJob"), jobParametersForStockImport);
 
-		JobParameters jobParametersForSimpleMovingAverage = new JobParametersBuilder()
+		JobParameters jobParametersForMovingAverage = new JobParametersBuilder()
 				.addLocalDate("date", LocalDate.parse("2023-07-06"))
 				.addLocalDateTime("timestamp", LocalDateTime.now())
 				.toJobParameters();
-		jobLauncher.run(jobLocator.getJob("calculateSimpleMovingAverageJob"), jobParametersForSimpleMovingAverage);
+		jobLauncher.run(jobLocator.getJob("calculateSimpleMovingAverageJob"), jobParametersForMovingAverage);
+
+		JobParameters jobParametersForMovingAverage2 = new JobParametersBuilder()
+				.addLocalDate("date", LocalDate.parse("2023-07-07"))
+				.addLocalDateTime("timestamp", LocalDateTime.now())
+				.toJobParameters();
+		jobLauncher.run(jobLocator.getJob("calculateExponentialMovingAverageJob"), jobParametersForMovingAverage2);
 	}
 }

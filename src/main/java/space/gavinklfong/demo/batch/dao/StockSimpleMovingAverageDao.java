@@ -3,34 +3,34 @@ package space.gavinklfong.demo.batch.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Component;
-import space.gavinklfong.demo.batch.dto.StockMarketData;
+import space.gavinklfong.demo.batch.dto.StockMovingAverage;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Component
-public class StockMarketDataDao {
+public class StockSimpleMovingAverageDao {
 
     private final JdbcClient jdbcClient;
-    private final StockMarketDataRowMapper stockMarketDataRowMapper;
+    private final StockMovingAverageRowMapper stockMovingAverageRowMapper;
 
     private static final String SELECT_BY_TICKER_AND_OLDER_THAN_DATE_WITH_LIMIT = "SELECT " +
-            "ticker, date, open, close, high, low, volume " +
-            "FROM stock_price_history " +
+            "ticker, date, value_10, value_20, value_50, value_100, value_200 " +
+            "FROM stock_price_sma " +
             "WHERE ticker = :ticker " +
-            "AND date <= :date " +
+            "AND date < :date " +
             "ORDER BY date DESC " +
             "LIMIT :limit";
 
-    public List<StockMarketData> findByTickerAndOlderOrEqualToDateWithLimit(String ticker, LocalDate date,
-                                                                             int limit) {
+    public List<StockMovingAverage> findByTickerAndOlderOrEqualToDateWithLimit(String ticker, LocalDate date,
+                                                                               int limit) {
 
         return jdbcClient.sql(SELECT_BY_TICKER_AND_OLDER_THAN_DATE_WITH_LIMIT)
                 .param("ticker", ticker)
                 .param("date", date)
                 .param("limit", limit)
-                .query(stockMarketDataRowMapper)
+                .query(stockMovingAverageRowMapper)
                 .list();
     }
 }

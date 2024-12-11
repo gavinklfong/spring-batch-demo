@@ -17,7 +17,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import space.gavinklfong.demo.batch.dao.StockMarketDataDao;
 import space.gavinklfong.demo.batch.dao.StockMarketDataRowMapper;
 import space.gavinklfong.demo.batch.dto.StockMarketData;
-import space.gavinklfong.demo.batch.dto.StockSimpleMovingAverage;
+import space.gavinklfong.demo.batch.dto.StockMovingAverage;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
@@ -37,12 +37,12 @@ public class CalculateStockSimpleMovingAverageJobConfig {
                                                  DataSourceTransactionManager transactionManager,
                                                  JdbcCursorItemReader<StockMarketData> stockMarketDataDatabaseReader,
                                                  StockSimpleMovingAverageProcessor stockSimpleMovingAverageProcessor,
-                                                 JdbcBatchItemWriter<StockSimpleMovingAverage> stockMovingAverageWriter) {
+                                                 JdbcBatchItemWriter<StockMovingAverage> stockSimpleMovingAverageWriter) {
         return new StepBuilder("calculateSimpleMovingAverageStep", jobRepository)
-                .<StockMarketData, StockSimpleMovingAverage> chunk(1000, transactionManager)
+                .<StockMarketData, StockMovingAverage> chunk(1000, transactionManager)
                 .reader(stockMarketDataDatabaseReader) // get list of stock by date from job parameter
                 .processor(stockSimpleMovingAverageProcessor)
-                .writer(stockMovingAverageWriter)
+                .writer(stockSimpleMovingAverageWriter)
                 .allowStartIfComplete(true)
                 .build();
     }
@@ -73,8 +73,8 @@ public class CalculateStockSimpleMovingAverageJobConfig {
     }
 
     @Bean
-    public JdbcBatchItemWriter<StockSimpleMovingAverage> stockMovingAverageWriter(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<StockSimpleMovingAverage>()
+    public JdbcBatchItemWriter<StockMovingAverage> stockSimpleMovingAverageWriter(DataSource dataSource) {
+        return new JdbcBatchItemWriterBuilder<StockMovingAverage>()
                 .sql("INSERT INTO stock_price_sma (ticker, date, value_10, value_20, value_50, value_100, value_200) " +
                         "VALUES (:ticker, :date, :value10, :value20, :value50, :value100, :value200) " +
                         "ON DUPLICATE KEY UPDATE " +

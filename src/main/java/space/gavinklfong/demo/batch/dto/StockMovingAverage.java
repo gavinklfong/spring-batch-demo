@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Builder
 @Value
-public class StockSimpleMovingAverage {
+public class StockMovingAverage {
     String ticker;
     LocalDate date;
     BigDecimal value10;
