@@ -16,6 +16,8 @@ import space.gavinklfong.demo.batch.dto.StockMarketData;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Slf4j
 //@JdbcTest
 @Testcontainers
@@ -48,7 +50,11 @@ public class StockMarketDataDaoIT {
     void findByTickerAndOlderOrEqualToDateWithLimit() {
         List<StockMarketData> stockMarketDataList =
                 stockMarketDataDao.findByTickerAndOlderOrEqualToDateWithLimit("APPL", LocalDate.parse("2024-10-15"), 5);
-        log.info("{}", stockMarketDataList);
+        assertThat(stockMarketDataList).hasSize(5);
+        stockMarketDataList.forEach(item -> {
+            assertThat(item.getTicker()).isEqualTo("APPL");
+            assertThat(item.getDate()).isBeforeOrEqualTo(LocalDate.parse("2024-10-15"));
+        });
     }
 
 }

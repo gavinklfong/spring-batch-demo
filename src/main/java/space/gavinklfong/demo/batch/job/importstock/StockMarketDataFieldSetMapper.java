@@ -1,4 +1,4 @@
-package space.gavinklfong.demo.batch.job;
+package space.gavinklfong.demo.batch.job.importstock;
 
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;

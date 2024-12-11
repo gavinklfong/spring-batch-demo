@@ -14,4 +14,6 @@ public class StockSimpleMovingAverage {
     BigDecimal value10;
     BigDecimal value20;
     BigDecimal value50;
+    BigDecimal value100;
+    BigDecimal value200;
 }

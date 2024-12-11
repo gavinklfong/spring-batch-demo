@@ -27,5 +27,7 @@ CREATE TABLE stock_price_sma  (
     value_10 decimal(14,2),
     value_20 decimal(14,2),
     value_50 decimal(14,2),
+    value_100 decimal(14,2),
+    value_200 decimal(14,2),
     PRIMARY KEY (ticker, `date`)
 );
