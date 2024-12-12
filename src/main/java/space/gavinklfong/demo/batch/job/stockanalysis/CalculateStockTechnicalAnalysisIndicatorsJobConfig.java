@@ -46,11 +46,13 @@ public class CalculateStockTechnicalAnalysisIndicatorsJobConfig {
 
     @Bean
     public Flow stockTechnicalAnalysisIndicatorsFlow1(Step calculateSimpleMovingAverageStep,
-                                                      Step calculateStockExponentialMovingAverageStep) {
+                                                      Step calculateStockExponentialMovingAverageStep,
+                                                      Step calculateStockMACDStep) {
         return new FlowBuilder<SimpleFlow>("stockTechnicalAnalysisIndicatorsFlow1")
 //                .start(calculateStockExponentialMovingAverageStep)
                 .start(calculateSimpleMovingAverageStep)
                 .next(calculateStockExponentialMovingAverageStep)
+                .next(calculateStockMACDStep)
                 .end();
     }
 

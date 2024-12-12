@@ -51,10 +51,5 @@ public class BatchApplication implements CommandLineRunner {
 
 			effectiveDate = effectiveDate.plusDays(1);
 		}
-
-		while (true) {
-			Thread.sleep(5000);
-		}
-
 	}
 }

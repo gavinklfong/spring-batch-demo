@@ -9,24 +9,25 @@ import space.gavinklfong.demo.batch.dto.StockMarketData;
 import space.gavinklfong.demo.batch.dto.StockPeriodIntervalValue;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @RequiredArgsConstructor
 public class StockMACDProcessor implements ItemProcessor<StockMarketData, StockMACD> {
 
     private final StockExponentialMovingAverageDao stockExponentialMovingAverageDao;
-    private final LocalDate date;
 
     @Override
     public StockMACD process(@NonNull StockMarketData stockMarketData) {
 
-        StockPeriodIntervalValue ema = stockExponentialMovingAverageDao
-                .findByTickerAndDate(stockMarketData.getTicker(), date)
-                .orElseThrow();
+        return stockExponentialMovingAverageDao
+                .findByTickerAndDate(stockMarketData.getTicker(), stockMarketData.getDate())
+                .map(ema -> buildStockMACD(stockMarketData, ema))
+                .orElse(null);
+    }
 
+    private StockMACD buildStockMACD(StockMarketData stockMarketData, StockPeriodIntervalValue ema) {
         return StockMACD.builder()
                 .ticker(stockMarketData.getTicker())
-                .date(date)
+                .date(stockMarketData.getDate())
                 .value(calculateMACD(ema))
                 .build();
     }
