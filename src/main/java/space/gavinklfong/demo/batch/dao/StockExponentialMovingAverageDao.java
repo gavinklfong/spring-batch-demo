@@ -30,8 +30,8 @@ public class StockExponentialMovingAverageDao {
             "WHERE ticker = :ticker " +
             "AND date = :date ";
 
-    public List<StockPeriodIntervalValue> findByTickerAndOlderOrEqualToDateWithLimit(String ticker, LocalDate date,
-                                                                                     int limit) {
+    public List<StockPeriodIntervalValue> findByTickerAndOlderThenDateWithLimit(String ticker, LocalDate date,
+                                                                                int limit) {
 
         return jdbcClient.sql(SELECT_BY_TICKER_AND_OLDER_THAN_DATE_WITH_LIMIT)
                 .param("ticker", ticker)

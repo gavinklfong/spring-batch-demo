@@ -50,9 +50,9 @@ public class StockExponentialMovingAverageDaoIT {
     }
 
     @Test
-    void findByTickerAndOlderOrEqualToDateWithLimit() {
+    void findByTickerAndOlderThenDateWithLimit() {
         List<StockPeriodIntervalValue> stockPeriodIntervalValueList =
-                stockExponentialMovingAverageDao.findByTickerAndOlderOrEqualToDateWithLimit("APPL", LocalDate.parse("2024-10-15"), 5);
+                stockExponentialMovingAverageDao.findByTickerAndOlderThenDateWithLimit("APPL", LocalDate.parse("2024-10-15"), 5);
         assertThat(stockPeriodIntervalValueList).hasSize(3);
         stockPeriodIntervalValueList.forEach(item -> {
             assertThat(item.getTicker()).isEqualTo("APPL");

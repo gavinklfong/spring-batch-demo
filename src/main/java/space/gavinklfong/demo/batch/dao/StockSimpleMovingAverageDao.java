@@ -23,8 +23,8 @@ public class StockSimpleMovingAverageDao {
             "ORDER BY date DESC " +
             "LIMIT :limit";
 
-    public List<StockPeriodIntervalValue> findByTickerAndOlderOrEqualToDateWithLimit(String ticker, LocalDate date,
-                                                                                     int limit) {
+    public List<StockPeriodIntervalValue> findByTickerAndOlderThanDateWithLimit(String ticker, LocalDate date,
+                                                                                int limit) {
 
         return jdbcClient.sql(SELECT_BY_TICKER_AND_OLDER_THAN_DATE_WITH_LIMIT)
                 .param("ticker", ticker)

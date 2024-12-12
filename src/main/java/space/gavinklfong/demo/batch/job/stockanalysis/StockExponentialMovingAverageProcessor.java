@@ -13,6 +13,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
+import static java.util.Objects.isNull;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,9 +31,17 @@ public class StockExponentialMovingAverageProcessor implements ItemProcessor<Sto
     public StockPeriodIntervalValue process(@NonNull StockMarketData stockMarketData) {
 
         // Get previous average
-        StockPeriodIntervalValue previousMovingAverage = retrievePreviousMovingAverage(stockMarketData.getTicker(), date);
+        Optional<StockPeriodIntervalValue> previousMovingAverage = retrievePreviousMovingAverage(stockMarketData.getTicker(), date);
+        if (previousMovingAverage.isEmpty()) {
+            log.warn("No previous average is found for ticker={}, date={}", stockMarketData.getTicker(), date);
+            return null;
+        }
 
-        // calculate moving average 10, 20 and 50
+        return buildExponentialMovingAverage(stockMarketData, previousMovingAverage.get());
+    }
+
+    private StockPeriodIntervalValue buildExponentialMovingAverage(StockMarketData stockMarketData,
+                                                                   StockPeriodIntervalValue previousMovingAverage) {
         return StockPeriodIntervalValue.builder()
                 .ticker(stockMarketData.getTicker())
                 .date(stockMarketData.getDate())
@@ -44,21 +55,39 @@ public class StockExponentialMovingAverageProcessor implements ItemProcessor<Sto
                 .build();
     }
 
-    private StockPeriodIntervalValue retrievePreviousMovingAverage(String ticker, LocalDate date) {
-        List<StockPeriodIntervalValue> movingAverageList =
-                stockExponentialMovingAverageDao.findByTickerAndOlderOrEqualToDateWithLimit(ticker, date, 1);
-        if (movingAverageList.isEmpty()) {
+    private Optional<StockPeriodIntervalValue> retrievePreviousMovingAverage(String ticker, LocalDate date) {
+        Optional<StockPeriodIntervalValue> exponentialMovingAverage = retrievePreviousExponentialMovingAverage(ticker, date);
+        if (exponentialMovingAverage.isEmpty() || exponentialMovingAverage.get().isAnyValueEmpty()) {
             log.info("previous EMA does not exist, use the previous SMA instead for ticker={}, date={}", ticker, date);
-            movingAverageList = stockSimpleMovingAverageDao.findByTickerAndOlderOrEqualToDateWithLimit(ticker, date, 1);
-            if (movingAverageList.isEmpty()) {
-                throw new RuntimeException(String.format("No previous average is found for ticker=%s, date=%s", ticker, date));
-            }
+            return retrievePreviousSimpleMovingAverage(ticker, date);
         }
+        return exponentialMovingAverage;
+    }
 
-        return movingAverageList.getFirst();
+    private Optional<StockPeriodIntervalValue> retrievePreviousSimpleMovingAverage(String ticker, LocalDate date) {
+        List<StockPeriodIntervalValue> averageList = stockSimpleMovingAverageDao.findByTickerAndOlderThanDateWithLimit(ticker, date, 1);
+        if (averageList.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(averageList.getFirst());
+        }
+    }
+
+    private Optional<StockPeriodIntervalValue> retrievePreviousExponentialMovingAverage(String ticker, LocalDate date) {
+        List<StockPeriodIntervalValue> averageList = stockExponentialMovingAverageDao.findByTickerAndOlderThenDateWithLimit(ticker, date, 1);
+        if (averageList.isEmpty()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(averageList.getFirst());
+        }
     }
 
     private BigDecimal calculateMovingAverage(StockMarketData stockMarketData, BigDecimal previousAverage, int averageDayInternal) {
+        if (isNull(previousAverage)) {
+            log.warn("previousAverage is null, ticker={}, date={}", stockMarketData.getTicker(), date);
+            return null;
+        }
+
         BigDecimal factor = new BigDecimal(SMOOTHING).divide(new BigDecimal(1 + averageDayInternal), 4, RoundingMode.HALF_UP);
         return stockMarketData.getClose()
                 .multiply(factor)

@@ -32,7 +32,7 @@ public class BatchApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-//		jobLauncher.run(jobLocator.getJob("importUserJob"), new JobParameters());
+		jobLauncher.run(jobLocator.getJob("importUserJob"), new JobParameters());
 
 		JobParameters jobParametersForStockImport = new JobParametersBuilder()
 				.addLocalDateTime("timestamp", LocalDateTime.now())
@@ -41,26 +41,20 @@ public class BatchApplication implements CommandLineRunner {
 
 		LocalDate effectiveDate = LocalDate.parse("2023-07-01");
 		while (effectiveDate.isBefore(LocalDate.parse("2023-07-20"))) {
-			JobParameters jobParametersForMovingAverage = new JobParametersBuilder()
+
+			JobParameters jobParametersForTechnicalAnalysisIndictorsJob = new JobParametersBuilder()
 					.addLocalDate("date", effectiveDate)
 					.addLocalDateTime("timestamp", LocalDateTime.now())
 					.toJobParameters();
-			jobLauncher.run(jobLocator.getJob("calculateSimpleMovingAverageJob"), jobParametersForMovingAverage);
+//			jobLauncher.run(jobLocator.getJob("calculateStockTechnicalAnalysisIndicatorsSequentialJob"), jobParametersForTechnicalAnalysisIndictorsJob);
+			jobLauncher.run(jobLocator.getJob("calculateStockTechnicalAnalysisIndicatorsSplitFlowJob"), jobParametersForTechnicalAnalysisIndictorsJob);
 
 			effectiveDate = effectiveDate.plusDays(1);
 		}
 
+		while (true) {
+			Thread.sleep(5000);
+		}
 
-//		JobParameters jobParametersForMcalculateExponentialMovingAverage = new JobParametersBuilder()
-//				.addLocalDate("date", LocalDate.parse("2023-07-07"))
-//				.addLocalDateTime("timestamp", LocalDateTime.now())
-//				.toJobParameters();
-//		jobLauncher.run(jobLocator.getJob("calculateExponentialMovingAverageJob"), jobParametersForMcalculateExponentialMovingAverage);
-
-		JobParameters jobParameters= new JobParametersBuilder()
-				.addLocalDate("date", LocalDate.parse("2023-07-07"))
-				.addLocalDateTime("timestamp", LocalDateTime.now())
-				.toJobParameters();
-		jobLauncher.run(jobLocator.getJob("calculateStockTechnicalAnalysisIndicatorsJob"), jobParameters);
 	}
 }
