@@ -8,12 +8,10 @@ import java.time.LocalDate;
 
 @Builder
 @Value
-public class StockMovingAverage {
+public class StockMACD {
     String ticker;
     LocalDate date;
-    BigDecimal value10;
-    BigDecimal value20;
-    BigDecimal value50;
-    BigDecimal value100;
-    BigDecimal value200;
+    BigDecimal value;
+    BigDecimal sma9;
+    BigDecimal ema9;
 }

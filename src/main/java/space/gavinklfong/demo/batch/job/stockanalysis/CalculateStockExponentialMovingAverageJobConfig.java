@@ -16,7 +16,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import space.gavinklfong.demo.batch.dao.StockExponentialMovingAverageDao;
 import space.gavinklfong.demo.batch.dao.StockSimpleMovingAverageDao;
 import space.gavinklfong.demo.batch.dto.StockMarketData;
-import space.gavinklfong.demo.batch.dto.StockMovingAverage;
+import space.gavinklfong.demo.batch.dto.StockPeriodIntervalValue;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
@@ -26,20 +26,20 @@ public class CalculateStockExponentialMovingAverageJobConfig {
 
     @Bean
     public Job calculateStockExponentialMovingAverageJob(JobRepository jobRepository,
-                                                        Step calculateStockExponetialMovingAverageStep) {
+                                                        Step calculateStockExponentialMovingAverageStep) {
         return new JobBuilder("calculateExponentialMovingAverageJob", jobRepository)
-                .start(calculateStockExponetialMovingAverageStep)
+                .start(calculateStockExponentialMovingAverageStep)
                 .build();
     }
 
     @Bean
-    public Step calculateStockExponetialMovingAverageStep(JobRepository jobRepository,
+    public Step calculateStockExponentialMovingAverageStep(JobRepository jobRepository,
                                                           DataSourceTransactionManager transactionManager,
                                                           JdbcCursorItemReader<StockMarketData> stockMarketDataDatabaseReader,
                                                           StockExponentialMovingAverageProcessor stockExponentialMovingAverageProcessor,
-                                                          JdbcBatchItemWriter<StockMovingAverage> stockExponentialMovingAverageWriter) {
+                                                          JdbcBatchItemWriter<StockPeriodIntervalValue> stockExponentialMovingAverageWriter) {
         return new StepBuilder("calculateStockExponentialMovingAverageStep", jobRepository)
-                .<StockMarketData, StockMovingAverage> chunk(1000, transactionManager)
+                .<StockMarketData, StockPeriodIntervalValue> chunk(1000, transactionManager)
                 .reader(stockMarketDataDatabaseReader) // get list of stock by date from job parameter
                 .processor(stockExponentialMovingAverageProcessor)
                 .writer(stockExponentialMovingAverageWriter)
@@ -57,13 +57,15 @@ public class CalculateStockExponentialMovingAverageJobConfig {
     }
 
     @Bean
-    public JdbcBatchItemWriter<StockMovingAverage> stockExponentialMovingAverageWriter(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<StockMovingAverage>()
-                .sql("INSERT INTO stock_price_ema (ticker, date, value_10, value_20, value_50, value_100, value_200) " +
-                        "VALUES (:ticker, :date, :value10, :value20, :value50, :value100, :value200) " +
+    public JdbcBatchItemWriter<StockPeriodIntervalValue> stockExponentialMovingAverageWriter(DataSource dataSource) {
+        return new JdbcBatchItemWriterBuilder<StockPeriodIntervalValue>()
+                .sql("INSERT INTO stock_price_ema (ticker, date, value_10, value_12, value_20, value_26, value_50, value_100, value_200) " +
+                        "VALUES (:ticker, :date, :value10, :value12, :value20, :value26, :value50, :value100, :value200) " +
                         "ON DUPLICATE KEY UPDATE " +
                         "value_10 = :value10, " +
+                        "value_12 = :value12, " +
                         "value_20 = :value20, " +
+                        "value_26 = :value26, " +
                         "value_50 = :value50, " +
                         "value_100 = :value100, " +
                         "value_200 = :value200 "

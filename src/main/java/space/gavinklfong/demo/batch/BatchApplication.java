@@ -37,18 +37,30 @@ public class BatchApplication implements CommandLineRunner {
 		JobParameters jobParametersForStockImport = new JobParametersBuilder()
 				.addLocalDateTime("timestamp", LocalDateTime.now())
 				.toJobParameters();
-//		jobLauncher.run(jobLocator.getJob("importStockMarketDataJob"), jobParametersForStockImport);
+		jobLauncher.run(jobLocator.getJob("importStockMarketDataJob"), jobParametersForStockImport);
 
-		JobParameters jobParametersForMovingAverage = new JobParametersBuilder()
-				.addLocalDate("date", LocalDate.parse("2023-07-06"))
-				.addLocalDateTime("timestamp", LocalDateTime.now())
-				.toJobParameters();
-		jobLauncher.run(jobLocator.getJob("calculateSimpleMovingAverageJob"), jobParametersForMovingAverage);
+		LocalDate effectiveDate = LocalDate.parse("2023-07-01");
+		while (effectiveDate.isBefore(LocalDate.parse("2023-07-20"))) {
+			JobParameters jobParametersForMovingAverage = new JobParametersBuilder()
+					.addLocalDate("date", effectiveDate)
+					.addLocalDateTime("timestamp", LocalDateTime.now())
+					.toJobParameters();
+			jobLauncher.run(jobLocator.getJob("calculateSimpleMovingAverageJob"), jobParametersForMovingAverage);
 
-		JobParameters jobParametersForMovingAverage2 = new JobParametersBuilder()
+			effectiveDate = effectiveDate.plusDays(1);
+		}
+
+
+//		JobParameters jobParametersForMcalculateExponentialMovingAverage = new JobParametersBuilder()
+//				.addLocalDate("date", LocalDate.parse("2023-07-07"))
+//				.addLocalDateTime("timestamp", LocalDateTime.now())
+//				.toJobParameters();
+//		jobLauncher.run(jobLocator.getJob("calculateExponentialMovingAverageJob"), jobParametersForMcalculateExponentialMovingAverage);
+
+		JobParameters jobParameters= new JobParametersBuilder()
 				.addLocalDate("date", LocalDate.parse("2023-07-07"))
 				.addLocalDateTime("timestamp", LocalDateTime.now())
 				.toJobParameters();
-		jobLauncher.run(jobLocator.getJob("calculateExponentialMovingAverageJob"), jobParametersForMovingAverage2);
+		jobLauncher.run(jobLocator.getJob("calculateStockTechnicalAnalysisIndicatorsJob"), jobParameters);
 	}
 }

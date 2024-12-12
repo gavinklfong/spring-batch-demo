@@ -13,7 +13,9 @@ CREATE TABLE stock_price_sma (
     ticker VARCHAR(30),
     `date` date,
     value_10 decimal(14,2),
+    value_12 decimal(14,2),
     value_20 decimal(14,2),
+    value_26 decimal(14,2),
     value_50 decimal(14,2),
     value_100 decimal(14,2),
     value_200 decimal(14,2),
@@ -24,9 +26,20 @@ CREATE TABLE stock_price_ema (
     ticker VARCHAR(30),
     `date` date,
     value_10 decimal(14,2),
+    value_12 decimal(14,2),
     value_20 decimal(14,2),
+    value_26 decimal(14,2),
     value_50 decimal(14,2),
     value_100 decimal(14,2),
     value_200 decimal(14,2),
+    PRIMARY KEY (ticker, `date`)
+);
+
+CREATE TABLE stock_price_macd (
+    ticker VARCHAR(30),
+    `date` date,
+    value decimal(14,2),
+    sma_9 decimal(14,2),
+    ema_9 decimal(14,2),
     PRIMARY KEY (ticker, `date`)
 );
