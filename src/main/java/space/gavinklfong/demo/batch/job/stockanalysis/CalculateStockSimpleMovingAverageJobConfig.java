@@ -66,10 +66,8 @@ public class CalculateStockSimpleMovingAverageJobConfig {
     }
 
     @Bean
-    @StepScope
-    public StockSimpleMovingAverageProcessor stockSimpleMovingAverageProcessor(
-            @Value("#{jobParameters['date']}") LocalDate date, StockMarketDataDao stockMarketDataDao) {
-        return new StockSimpleMovingAverageProcessor(stockMarketDataDao, date);
+    public StockSimpleMovingAverageProcessor stockSimpleMovingAverageProcessor(StockMarketDataDao stockMarketDataDao) {
+        return new StockSimpleMovingAverageProcessor(stockMarketDataDao);
     }
 
     @Bean

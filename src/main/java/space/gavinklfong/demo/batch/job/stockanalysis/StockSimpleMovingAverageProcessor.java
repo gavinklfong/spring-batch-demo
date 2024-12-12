@@ -17,26 +17,25 @@ import java.util.List;
 public class StockSimpleMovingAverageProcessor implements ItemProcessor<StockMarketData, StockPeriodIntervalValue> {
 
     private final StockMarketDataDao stockMarketDataDao;
-    private final LocalDate date;
 
     @Override
     public StockPeriodIntervalValue process(@NonNull StockMarketData stockMarketData) {
 
         List<StockMarketData> stockMarketDataList = new ArrayList<>();
         stockMarketDataList.add(stockMarketData);
-        stockMarketDataList.addAll(retrieveStockMarketData(stockMarketData.getTicker(), date));
+        stockMarketDataList.addAll(retrieveStockMarketData(stockMarketData.getTicker(), stockMarketData.getDate()));
 
         // calculate moving average 10, 20 and 50
         return StockPeriodIntervalValue.builder()
                 .ticker(stockMarketData.getTicker())
                 .date(stockMarketData.getDate())
-                .value10(calculateMFI(stockMarketDataList, 10))
-                .value12(calculateMFI(stockMarketDataList, 12))
-                .value20(calculateMFI(stockMarketDataList, 20))
-                .value26(calculateMFI(stockMarketDataList, 26))
-                .value50(calculateMFI(stockMarketDataList, 50))
-                .value100(calculateMFI(stockMarketDataList, 100))
-                .value200(calculateMFI(stockMarketDataList, 200))
+                .value10(calculateMovingAverage(stockMarketDataList, 10))
+                .value12(calculateMovingAverage(stockMarketDataList, 12))
+                .value20(calculateMovingAverage(stockMarketDataList, 20))
+                .value26(calculateMovingAverage(stockMarketDataList, 26))
+                .value50(calculateMovingAverage(stockMarketDataList, 50))
+                .value100(calculateMovingAverage(stockMarketDataList, 100))
+                .value200(calculateMovingAverage(stockMarketDataList, 200))
                 .build();
     }
 
@@ -44,7 +43,7 @@ public class StockSimpleMovingAverageProcessor implements ItemProcessor<StockMar
         return stockMarketDataDao.findByTickerAndOlderOrEqualToDateWithLimit(ticker, date, 200);
     }
 
-    private BigDecimal calculateMFI(List<StockMarketData> stockMarketDataList, int averageDayInterval) {
+    private BigDecimal calculateMovingAverage(List<StockMarketData> stockMarketDataList, int averageDayInterval) {
         if (stockMarketDataList.size() < averageDayInterval) {
             return null;
         }

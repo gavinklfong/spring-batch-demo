@@ -21,25 +21,24 @@ import static org.apache.commons.lang3.compare.ComparableUtils.is;
 public class StockMoneyFlowIndexProcessor implements ItemProcessor<StockMarketData, StockPeriodIntervalValue> {
 
     private final StockMarketDataDao stockMarketDataDao;
-    private final LocalDate date;
 
     @Override
     public StockPeriodIntervalValue process(@NonNull StockMarketData stockMarketData) {
 
         List<StockMarketData> stockMarketDataList = new ArrayList<>();
         stockMarketDataList.add(stockMarketData);
-        stockMarketDataList.addAll(retrieveStockMarketData(stockMarketData.getTicker(), date));
+        stockMarketDataList.addAll(retrieveStockMarketData(stockMarketData.getTicker(), stockMarketData.getDate()));
 
         StockPeriodIntervalValue result = StockPeriodIntervalValue.builder()
                 .ticker(stockMarketData.getTicker())
                 .date(stockMarketData.getDate())
-                .value10(calculateMFI(stockMarketDataList, 10))
-                .value12(calculateMFI(stockMarketDataList, 12))
-                .value20(calculateMFI(stockMarketDataList, 20))
-                .value26(calculateMFI(stockMarketDataList, 26))
-                .value50(calculateMFI(stockMarketDataList, 50))
-                .value100(calculateMFI(stockMarketDataList, 100))
-                .value200(calculateMFI(stockMarketDataList, 200))
+                .value10(calculateMFI(stockMarketData.getDate(), stockMarketDataList, 10))
+                .value12(calculateMFI(stockMarketData.getDate(), stockMarketDataList, 12))
+                .value20(calculateMFI(stockMarketData.getDate(), stockMarketDataList, 20))
+                .value26(calculateMFI(stockMarketData.getDate(), stockMarketDataList, 26))
+                .value50(calculateMFI(stockMarketData.getDate(), stockMarketDataList, 50))
+                .value100(calculateMFI(stockMarketData.getDate(), stockMarketDataList, 100))
+                .value200(calculateMFI(stockMarketData.getDate(), stockMarketDataList, 200))
                 .build();
 
         return result;
@@ -49,7 +48,7 @@ public class StockMoneyFlowIndexProcessor implements ItemProcessor<StockMarketDa
         return stockMarketDataDao.findByTickerAndOlderOrEqualToDateWithLimit(ticker, date, 200);
     }
 
-    private BigDecimal calculateMFI(List<StockMarketData> stockMarketDataList, int averageDayInterval) {
+    private BigDecimal calculateMFI(LocalDate date, List<StockMarketData> stockMarketDataList, int averageDayInterval) {
         if (stockMarketDataList.size() < averageDayInterval) {
             return null;
         }

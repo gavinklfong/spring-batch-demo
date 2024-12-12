@@ -1,13 +1,11 @@
 package space.gavinklfong.demo.batch.job.stockanalysis;
 
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -16,7 +14,6 @@ import space.gavinklfong.demo.batch.dto.StockMarketData;
 import space.gavinklfong.demo.batch.dto.StockPeriodIntervalValue;
 
 import javax.sql.DataSource;
-import java.time.LocalDate;
 
 @Configuration
 public class CalculateStockMoneyFlowIndexJobConfig {
@@ -37,10 +34,8 @@ public class CalculateStockMoneyFlowIndexJobConfig {
     }
 
     @Bean
-    @StepScope
-    public StockMoneyFlowIndexProcessor stockMoneyFlowIndexProcessor(
-            @Value("#{jobParameters['date']}") LocalDate date, StockMarketDataDao stockMarketDataDao) {
-        return new StockMoneyFlowIndexProcessor(stockMarketDataDao, date);
+    public StockMoneyFlowIndexProcessor stockMoneyFlowIndexProcessor(StockMarketDataDao stockMarketDataDao) {
+        return new StockMoneyFlowIndexProcessor(stockMarketDataDao);
     }
 
     @Bean
