@@ -6,6 +6,7 @@ import org.springframework.batch.core.configuration.JobLocator;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @SpringBootApplication
 public class BatchApplication implements CommandLineRunner {
 	@Autowired
+	@Qualifier("syncJobLauncher")
 	JobLauncher jobLauncher;
 
 	@Autowired

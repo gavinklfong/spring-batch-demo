@@ -18,10 +18,12 @@ public class CalculateStockTechnicalAnalysisIndicatorsJobConfig {
     public Job calculateStockTechnicalAnalysisIndicatorsSequentialJob(JobRepository jobRepository,
                                                             Step calculateSimpleMovingAverageStep,
                                                             Step calculateStockExponentialMovingAverageStep,
+                                                            Step calculateStockMACDStep,
                                                             Step calculateMoneyFlowIndexStep) {
         return new JobBuilder("calculateStockTechnicalAnalysisIndicatorsSequentialJob", jobRepository)
                 .start(calculateSimpleMovingAverageStep)
                 .next(calculateStockExponentialMovingAverageStep)
+                .next(calculateStockMACDStep)
                 .next(calculateMoneyFlowIndexStep)
                 .build();
     }
@@ -49,7 +51,6 @@ public class CalculateStockTechnicalAnalysisIndicatorsJobConfig {
                                                       Step calculateStockExponentialMovingAverageStep,
                                                       Step calculateStockMACDStep) {
         return new FlowBuilder<SimpleFlow>("stockTechnicalAnalysisIndicatorsFlow1")
-//                .start(calculateStockExponentialMovingAverageStep)
                 .start(calculateSimpleMovingAverageStep)
                 .next(calculateStockExponentialMovingAverageStep)
                 .next(calculateStockMACDStep)
@@ -62,9 +63,4 @@ public class CalculateStockTechnicalAnalysisIndicatorsJobConfig {
                 .start(calculateMoneyFlowIndexStep)
                 .end();
     }
-
-//    @Bean
-//    public TaskExecutor taskExecutor() {
-//        return new SimpleAsyncTaskExecutor("stock_indicator");
-//    }
 }

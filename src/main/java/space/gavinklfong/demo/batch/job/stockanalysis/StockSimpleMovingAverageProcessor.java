@@ -25,7 +25,6 @@ public class StockSimpleMovingAverageProcessor implements ItemProcessor<StockMar
         stockMarketDataList.add(stockMarketData);
         stockMarketDataList.addAll(retrieveStockMarketData(stockMarketData.getTicker(), stockMarketData.getDate()));
 
-        // calculate moving average 10, 20 and 50
         return StockPeriodIntervalValue.builder()
                 .ticker(stockMarketData.getTicker())
                 .date(stockMarketData.getDate())
