@@ -68,3 +68,19 @@ CREATE TABLE stock_price_mfi (
     value_200 decimal(14,2),
     PRIMARY KEY (ticker, `date`)
 );
+
+CREATE TABLE investment_account_holding (
+    account_number VARCHAR(30),
+    `date` date,
+    aapl decimal(14,2),
+    sbux decimal(14,2),
+    msft decimal(14,2),
+    csco decimal(14,2),
+    qcom decimal(14,2),
+    meta decimal(14,2),
+    amzn decimal(14,2),
+    tsla decimal(14,2),
+    amd decimal(14,2),
+    nflx decimal(14,2),
+    PRIMARY KEY (account_number, date)
+);
