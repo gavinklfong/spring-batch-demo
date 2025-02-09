@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @EnableBatchProcessing
@@ -33,14 +34,23 @@ public class BatchApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		JobParameters jobParameters = new JobParametersBuilder()
-			.addLocalDateTime("timestamp", LocalDateTime.now())
-			.toJobParameters();
-		jobLauncher.run(jobLocator.getJob("importInvestmentAccountHoldingJob"), jobParameters);
+		jobLauncher.run(jobLocator.getJob("importUserJob"), new JobParameters());
 
-//		while (true) {
-//			Thread.sleep(10000);
-//		}
+		JobParameters jobParametersForStockImport = new JobParametersBuilder()
+				.addLocalDateTime("timestamp", LocalDateTime.now())
+				.toJobParameters();
+		jobLauncher.run(jobLocator.getJob("importStockMarketDataJob"), jobParametersForStockImport);
+
+		LocalDate effectiveDate = LocalDate.parse("2023-07-01");
+		while (effectiveDate.isBefore(LocalDate.parse("2023-07-20"))) {
+
+			JobParameters jobParametersForTechnicalAnalysisIndictorsJob = new JobParametersBuilder()
+					.addLocalDate("date", effectiveDate)
+					.addLocalDateTime("timestamp", LocalDateTime.now())
+					.toJobParameters();
+//			jobLauncher.run(jobLocator.getJob("calculateStockTechnicalAnalysisIndicatorsSequentialJob"), jobParametersForTechnicalAnalysisIndictorsJob);
+			jobLauncher.run(jobLocator.getJob("calculateStockTechnicalAnalysisIndicatorsSplitFlowJob"), jobParametersForTechnicalAnalysisIndictorsJob);
+		}
 	}
 
 //	@Override
