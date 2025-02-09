@@ -1,6 +1,7 @@
 services:
   mysql:
     image: mysql:8
+    container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: Password!@
     ports:
@@ -9,3 +10,23 @@ services:
       - "./mysql/database.sql:/docker-entrypoint-initdb.d/01.sql"
       - "./mysql/spring-batch-schema.sql:/docker-entrypoint-initdb.d/02.sql"
       - "./mysql/app-schema.sql:/docker-entrypoint-initdb.d/03.sql"
+
+  mysqlexporter:
+    image: mysql_count_exporter
+    container_name: mysqlexporter
+    environment:
+      DATA_SOURCE_NAME: root:Password!@@tcp(mysql:3306)/demo?parseTime=true&loc=UTC
+    ports:
+      - "9557:9557"
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    depends_on:
+      - mysqlexporter
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"

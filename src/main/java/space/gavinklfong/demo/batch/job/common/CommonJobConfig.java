@@ -26,4 +26,5 @@ public class CommonJobConfig {
         jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
         return jobLauncher;
     }
+
 }

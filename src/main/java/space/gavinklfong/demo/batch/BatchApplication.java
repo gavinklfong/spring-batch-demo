@@ -50,8 +50,29 @@ public class BatchApplication implements CommandLineRunner {
 					.toJobParameters();
 //			jobLauncher.run(jobLocator.getJob("calculateStockTechnicalAnalysisIndicatorsSequentialJob"), jobParametersForTechnicalAnalysisIndictorsJob);
 			jobLauncher.run(jobLocator.getJob("calculateStockTechnicalAnalysisIndicatorsSplitFlowJob"), jobParametersForTechnicalAnalysisIndictorsJob);
-
-			effectiveDate = effectiveDate.plusDays(1);
 		}
 	}
+
+//	@Override
+//	public void run(String... args) throws Exception {
+//		jobLauncher.run(jobLocator.getJob("importUserJob"), new JobParameters());
+//
+//		JobParameters jobParametersForStockImport = new JobParametersBuilder()
+//				.addLocalDateTime("timestamp", LocalDateTime.now())
+//				.toJobParameters();
+//		jobLauncher.run(jobLocator.getJob("importStockMarketDataJob"), jobParametersForStockImport);
+//
+//		LocalDate effectiveDate = LocalDate.parse("2023-07-01");
+//		while (effectiveDate.isBefore(LocalDate.parse("2023-07-20"))) {
+//
+//			JobParameters jobParametersForTechnicalAnalysisIndictorsJob = new JobParametersBuilder()
+//					.addLocalDate("date", effectiveDate)
+//					.addLocalDateTime("timestamp", LocalDateTime.now())
+//					.toJobParameters();
+////			jobLauncher.run(jobLocator.getJob("calculateStockTechnicalAnalysisIndicatorsSequentialJob"), jobParametersForTechnicalAnalysisIndictorsJob);
+//			jobLauncher.run(jobLocator.getJob("calculateStockTechnicalAnalysisIndicatorsSplitFlowJob"), jobParametersForTechnicalAnalysisIndictorsJob);
+//
+//			effectiveDate = effectiveDate.plusDays(1);
+//		}
+//	}
 }
