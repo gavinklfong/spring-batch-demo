@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import space.gavinklfong.demo.batch.dto.InvestmentAccountHolding;
 import space.gavinklfong.demo.batch.job.common.InvestmentAccountHoldingFieldSetMapper;
@@ -26,6 +27,7 @@ public class InvestmentAccountHoldingImportJobConfig {
 
     @Bean
     public Job importInvestmentAccountHoldingJob(JobRepository jobRepository,
+                                                 Step masterStep,
                                                  Step importInvestmentAccountHoldingStep,
                                                  JobCompletionNotificationListener listener) {
         return new JobBuilder("importInvestmentAccountHoldingJob", jobRepository)
@@ -36,13 +38,13 @@ public class InvestmentAccountHoldingImportJobConfig {
 
     @Bean
     public Step importInvestmentAccountHoldingStep(JobRepository jobRepository, DataSourceTransactionManager transactionManager,
-                      MultiResourceItemReader<InvestmentAccountHolding> investmentAccountHoldingMultiResourceReader,
-                      JdbcBatchItemWriter<InvestmentAccountHolding> investmentAccountHoldingWriter) {
+                                                   MultiResourceItemReader<InvestmentAccountHolding> investmentAccountHoldingMultiResourceReader,
+                                                   JdbcBatchItemWriter<InvestmentAccountHolding> investmentAccountHoldingWriter) {
         return new StepBuilder("importInvestmentAccountHoldingStep", jobRepository)
-                .<InvestmentAccountHolding, InvestmentAccountHolding> chunk(1000, transactionManager)
+                .<InvestmentAccountHolding, InvestmentAccountHolding> chunk(10000, transactionManager)
                 .reader(investmentAccountHoldingMultiResourceReader)
                 .writer(investmentAccountHoldingWriter)
-//                .taskExecutor(new SimpleAsyncTaskExecutor("inv_import"))
+                .taskExecutor(new SimpleAsyncTaskExecutor("inv_import"))
                 .build();
     }
 
